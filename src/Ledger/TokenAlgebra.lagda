@@ -42,7 +42,8 @@ record TokenAlgebra : Set₁ where
          coinIsMonoidHomomorphism  : IsMonoidHomomorphism coin
 \end{code}
 \begin{code}[hide]
-         instance DecEq-Value : DecEq Value
+        instance DecEq-Value : DecEq Value
+        instance DecEq-PolicyId : DecEq PolicyId
 \end{code}
 \begin{code}
   sumᵛ : List Value → Value
