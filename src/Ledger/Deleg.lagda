@@ -151,11 +151,34 @@ data _⊢_⇀⦇_,CERT⦈_ : CertEnv → CertState → DCert → CertState → S
 
 _⊢_⇀⦇_,CERTS⦈_ : CertEnv → CertState → List DCert → CertState → Set
 _⊢_⇀⦇_,CERTS⦈_ = SS⇒BS λ (Γ , _) → Γ ⊢_⇀⦇_,CERT⦈_
-
---Computational-CERTS : Computational _⊢_⇀⦇_,CERTS⦈_
---Computational-CERTS = MkComputational
---  (λ Γ st cs → {!!})
---  {!!}
 \end{code}
 \caption{VDel rules \& definitions}
 \end{figure*}
+
+\begin{code}[hide]
+open import Interface.Decidable.Instance
+open import Data.Maybe.Properties
+
+open import Tactic.ReduceDec
+open import MyDebugOptions
+
+Computational-DELEG : Computational _⊢_⇀⦇_,DELEG⦈_
+Computational-DELEG .compute pp ⟦ vDelegs , sDelegs ⟧ᵈ (delegate c mc mc' d) =
+  ifᵈ d ≡ requiredDeposit pp mc ⊔ requiredDeposit pp mc'
+    then just ⟦ update c mc vDelegs , update c mc' sDelegs ⟧ᵈ
+    else nothing
+Computational-DELEG .compute Γ s _ = nothing
+Computational-DELEG .≡-just⇔STS {pp} {⟦ s₁ , s₂ ⟧ᵈ} {cert} {s'} = mk⇔
+  (case cert return (λ c → compute Computational-DELEG pp ⟦ s₁ , s₂ ⟧ᵈ c ≡ just s' → pp ⊢ ⟦ s₁ , s₂ ⟧ᵈ ⇀⦇ c ,DELEG⦈ s') of λ where
+    (delegate c mc mc' d) h → case d ≟ requiredDeposit pp mc ⊔ requiredDeposit pp mc' of λ where
+      (yes p) → subst _ (just-injective $ by-reduceDec h) (DELEG-delegate {mc = mc} {mc'} {s₁} {s₂} {c} p)
+      (no ¬p) → case by-reduceDec h of λ ()
+    _ → {!!}) -- TODO: this reduces to a nothing = just x hypothesis if you write out all the cases
+  (λ where (DELEG-delegate {mc = mc} {mc'} {vDelegs} {sDelegs} {c} h) → by-reduceDecInGoal
+             (refl {x = just ⟦ update c mc vDelegs , update c mc' sDelegs ⟧ᵈ}))
+
+Computational-CERTS : Computational _⊢_⇀⦇_,CERTS⦈_
+Computational-CERTS .compute     = {!!}
+Computational-CERTS .≡-just⇔STS = {!!}
+
+\end{code}
