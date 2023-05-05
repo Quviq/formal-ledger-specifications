@@ -77,6 +77,20 @@ rec {
             find $out/MAlonzo -name "*.hs" -print | sed "s#^$out/#        #;s#\.hs##;s#/#.#g" >> $out/agda-ledger-executable-spec.cabal
           '';
         };
+      texSrc = stdenv.mkDerivation {
+        pname = "${dir}-tex-src";
+        version = "0.1";
+        src = "${formalLedger}";
+        meta = { };
+        buildInputs = [ agdaWithStdLibMeta ];
+        buildPhase = ''
+          find ${dir} -name \*.lagda -exec agda --latex {} \;
+        '';
+        installPhase = ''
+          mkdir -p $out
+          cp -r latex/* $out
+        '';
+      };
       docs = stdenv.mkDerivation {
         pname = "${dir}-docs";
         version = "0.1";
@@ -110,6 +124,7 @@ rec {
       executableSpecSrc = hsSrc;
       executableSpec = haskellPackages.callCabal2nix "Agda-ledger-executable-spec" "${hsSrc}" { };
       docs = docs;
+      texSrc = texSrc;
       name = dir;
     };
 
