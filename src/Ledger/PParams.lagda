@@ -90,6 +90,16 @@ record PParams : Set where
         -- Script
         collateralPercent : ℕ
 
+-- New Protocol Parameters
+--        costmdls : (Language → CostModel)
+--        prices : Prices
+--        maxTxExUnits : ExUnits
+--        maxBlockExUnits : ExUnits
+--        maxValSize : N
+--        coinsPerUTxOWord : Coin
+--        collateralPercent : N
+--        maxCollateralInputs : N
+
 paramsWellFormed : PParams → Bool
 paramsWellFormed pp = ⌊ ¬? (0 ∈? setFromList
   (maxBlockSize ∷ maxTxSize ∷ maxHeaderSize ∷ maxValSize ∷ minUTxOValue ∷ poolDeposit

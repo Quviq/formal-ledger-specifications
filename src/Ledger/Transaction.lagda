@@ -24,7 +24,6 @@ data Tag : Set where
   Spend Mint Cert Rewrd : Tag
 unquoteDecl DecEq-Tag = derive-DecEq ((quote Tag , DecEq-Tag) ∷ [])
 
--- Is this fine
 Index = ℕ
 
 RdmrPtr : Set
@@ -138,6 +137,8 @@ the transaction body are:
           wits    : TxWitnesses
           isValid : Bool
           txAD    : Maybe AuxiliaryData
+\end{code}
+\emph{Abstract functions}
 \end{code}
 \end{AgdaSuppressSpace}
 \caption{Definitions used in the UTxO transition system}
