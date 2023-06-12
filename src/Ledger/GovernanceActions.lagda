@@ -15,6 +15,7 @@ open import Ledger.Crypto
 
 open import Ledger.Prelude hiding (yes; no)
 open import Ledger.Epoch
+open import Ledger.Script
 
 import Ledger.PParams as PP
 
@@ -23,17 +24,19 @@ open import Data.Nat.Properties using (+-0-commutativeMonoid; +-0-monoid)
 open import Data.Rational using (ℚ; 0ℚ; 1ℚ)
 
 module Ledger.GovernanceActions (TxId Network DocHash : Set)
+                                (crypto : Crypto)
                                 (es : EpochStructure)
-                                (ppd : PP.PParamsDiff es)
-                                (ppHashable : isHashableSet (PP.PParams es))
-                                (crypto : Crypto) ⦃ _ : DecEq Network ⦄ where
+                                (ss : ScriptStructure crypto es)
+                                (ppd : PP.PParamsDiff crypto es ss)
+                                (ppHashable : isHashableSet (PP.PParams crypto es ss))
+                                ⦃ _ : DecEq Network ⦄ where
 
 open EpochStructure es
 open Crypto crypto
 
 open import Ledger.Address Network KeyHash ScriptHash
 
-open PP es
+open PP _ _ ss
 open PParamsDiff ppd
 open isHashableSet ppHashable renaming (THash to PPHash)
 

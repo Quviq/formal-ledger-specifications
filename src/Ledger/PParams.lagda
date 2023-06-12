@@ -6,9 +6,15 @@ such as minimum fees, maximum and minimum sizes of certain components, and more.
 \begin{code}[hide]
 {-# OPTIONS --safe #-}
 
+open import Ledger.Crypto
 open import Ledger.Epoch
+open import Ledger.Script
+open import Ledger.Prelude hiding (All; Any)
 
-module Ledger.PParams (es : EpochStructure) where
+
+module Ledger.PParams (crypto : Crypto )
+                      (es     : EpochStructure)
+                      (ss     : ScriptStructure crypto es) where
 
 open import Ledger.Prelude
 
@@ -18,6 +24,7 @@ open import Relation.Nullary.Decidable
 open import Tactic.Derive.DecEq
 
 open EpochStructure es
+open ScriptStructure ss
 \end{code}
 \begin{figure*}[h!]
 {\small
@@ -88,17 +95,14 @@ record PParams : Set where
         drepActivity      : Epoch
 
         -- Script
-        collateralPercent : ℕ
-
--- New Protocol Parameters
---        costmdls : (Language → CostModel)
---        prices : Prices
---        maxTxExUnits : ExUnits
---        maxBlockExUnits : ExUnits
---        maxValSize : N
---        coinsPerUTxOWord : Coin
---        collateralPercent : N
---        maxCollateralInputs : N
+        -- costmdls            : Language → CostModel (Does not work with DecEq)
+        costmdls            : CostModel
+        prices              : Prices
+        maxTxExUnits        : ExUnits
+        maxBlockExUnits     : ExUnits
+        coinsPerUTxOWord    : Coin
+        collateralPercent   : ℕ
+        maxCollateralInputs : ℕ
 
 paramsWellFormed : PParams → Bool
 paramsWellFormed pp = ⌊ ¬? (0 ∈? setFromList
