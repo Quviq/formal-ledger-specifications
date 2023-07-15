@@ -38,7 +38,7 @@ data DCert : Set where
   retirepool  : Credential → Epoch → DCert
   regdrep     : Credential → Coin → Anchor → DCert
   deregdrep   : Credential → DCert
-  ccreghot    : Credential → Maybe KeyHash → DCert
+  ccreghot    : Credential → Maybe Credential → DCert
 
 record CertEnv : Set where
   constructor ⟦_,_,_⟧ᶜ
@@ -67,7 +67,7 @@ record PState : Set where
 record GState : Set where
   constructor ⟦_,_⟧ᵛ
   field dreps      : Credential ⇀ Epoch
-        ccHotKeys  : KeyHash ⇀ Maybe KeyHash -- TODO: maybe replace with credential
+        ccHotKeys  : Credential ⇀ Maybe Credential
 
 record CertState : Set where
   field dState : DState
@@ -83,7 +83,7 @@ private variable
   vDelegs : Credential ⇀ VDeleg
   sDelegs : Credential ⇀ Credential
   retiring retiring' : Credential ⇀ Epoch
-  ccKeys : KeyHash ⇀ Maybe KeyHash
+  ccKeys : Credential ⇀ Maybe Credential
   rwds : RwdAddr ⇀ Coin
   dCert : DCert
   c c' : Credential
@@ -139,6 +139,7 @@ data _⊢_⇀⦇_,POOL⦈_ : PoolEnv → PState → DCert → PState → Set whe
          ⟦ pools , ❴ c , e ❵ᵐ ∪ᵐˡ retiring ⟧ᵖ
 
 data _⊢_⇀⦇_,GOVCERT⦈_ : GovCertEnv → GState → DCert → GState → Set where
+
   GOVCERT-regdrep : let open PParams pp in
     (d ≡ drepDeposit × c ∉ dom (dReps ˢ)) ⊎ (d ≡ 0 × c ∈ dom (dReps ˢ))
     ────────────────────────────────
@@ -152,10 +153,10 @@ data _⊢_⇀⦇_,GOVCERT⦈_ : GovCertEnv → GState → DCert → GState → S
         ⟦ dReps ∣ ❴ c ❵ ᶜ , ccKeys ⟧ᵛ
 
   GOVCERT-ccreghot :
-    (kh , nothing) ∉ ccKeys ˢ
+    (c , nothing) ∉ ccKeys ˢ
     ────────────────────────────────
-    Γ ⊢ ⟦ dReps , ccKeys ⟧ᵛ ⇀⦇ ccreghot (inj₁ kh) mkh ,GOVCERT⦈
-        ⟦ dReps , singletonᵐ kh mkh ∪ᵐˡ ccKeys ⟧ᵛ
+    Γ ⊢ ⟦ dReps , ccKeys ⟧ᵛ ⇀⦇ ccreghot c mc ,GOVCERT⦈
+        ⟦ dReps , singletonᵐ c mc ∪ᵐˡ ccKeys ⟧ᵛ
 
 data _⊢_⇀⦇_,CERT⦈_ : CertEnv → CertState → DCert → CertState → Set where
   CERT-deleg :

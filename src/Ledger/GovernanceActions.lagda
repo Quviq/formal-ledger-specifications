@@ -54,17 +54,17 @@ record Anchor : Set where
          hash  : DocHash
 
 data GovAction : Set where
-  NoConfidence     :                                    GovAction
-  NewCommittee     : KeyHash ⇀ Epoch → ℙ KeyHash → ℚ  → GovAction
-  NewConstitution  : DocHash                          → GovAction
-  TriggerHF        : ProtVer                          → GovAction
-  ChangePParams    : UpdateT → PPHash                 → GovAction
-  TreasuryWdrl     : (Credential ⇀ Coin)              → GovAction
-  Info             :                                    GovAction
+  NoConfidence     :                                            GovAction
+  NewCommittee     : (Credential ⇀ Epoch) → ℙ Credential → ℚ  → GovAction
+  NewConstitution  : DocHash                                  → GovAction
+  TriggerHF        : ProtVer                                  → GovAction
+  ChangePParams    : UpdateT                                  → GovAction
+  TreasuryWdrl     : (Credential ⇀ Coin)                      → GovAction
+  Info             :                                            GovAction
 
-actionWellFormed : GovAction → Bool
-actionWellFormed (ChangePParams x _) = ppdWellFormed x
-actionWellFormed _                   = true
+proposalWellFormed : GovAction → Bool
+proposalWellFormed (ChangePParams x) = ppdWellFormed x
+proposalWellFormed _                 = true
 
 maximum : ℙ ℚ → ℚ
 maximum x = foldl Data.Rational._⊔_ 0ℚ (proj₁ $ finiteness x)
@@ -100,7 +100,7 @@ module _ (pp : PParams) (ccThreshold' : Maybe ℚ) where
                         nothing  → λ { CC → 0ℚ          ; DRep → P2b  ; SPO → Q2b }
   threshold (NewConstitution _)  = λ { CC → ccThreshold ; DRep → P3   ; SPO → 0ℚ }
   threshold (TriggerHF _)        = λ { CC → ccThreshold ; DRep → P4   ; SPO → Q4 }
-  threshold (ChangePParams x _)  = λ { CC → ccThreshold ; DRep → P5 x ; SPO → 0ℚ }
+  threshold (ChangePParams x)    = λ { CC → ccThreshold ; DRep → P5 x ; SPO → 0ℚ }
   threshold (TreasuryWdrl _)     = λ { CC → ccThreshold ; DRep → P6   ; SPO → 0ℚ }
   threshold Info                 = λ { CC → 2ℚ          ; DRep → 2ℚ   ; SPO → 2ℚ }
 
@@ -109,7 +109,7 @@ NeedsHash NoConfidence         = GovActionID
 NeedsHash (NewCommittee _ _ _) = GovActionID
 NeedsHash (NewConstitution _)  = GovActionID
 NeedsHash (TriggerHF _)        = GovActionID
-NeedsHash (ChangePParams _ _)  = GovActionID
+NeedsHash (ChangePParams _)    = GovActionID
 NeedsHash (TreasuryWdrl _)     = ⊤
 NeedsHash Info                 = ⊤
 
@@ -127,6 +127,7 @@ record GovVote : Set where
 
 record GovProposal : Set where
   field returnAddr  : RwdAddr
+        -- TODO: deposit amount
         action      : GovAction
         prevAction  : NeedsHash action
         anchor      : Anchor
@@ -153,7 +154,7 @@ record EnactEnv : Set where
   field gid  : GovActionID
 
 record EnactState : Set where
-  field cc            : HashProtected (Maybe (KeyHash ⇀ Epoch × ℚ))
+  field cc            : HashProtected (Maybe (Credential ⇀ Epoch × ℚ))
         constitution  : HashProtected DocHash
         pv            : HashProtected ProtVer
         pparams       : HashProtected PParams
@@ -166,8 +167,8 @@ open EnactState
 private variable
   s : EnactState
   up : UpdateT
-  new : KeyHash ⇀ Epoch
-  rem : ℙ KeyHash
+  new : Credential ⇀ Epoch
+  rem : ℙ Credential
   q : ℚ
   dh : DocHash
   h : PPHash
@@ -196,10 +197,11 @@ data _⊢_⇀⦇_,ENACT⦈_ where
   Enact-NewConst  : ⟦ gid ⟧ᵉ ⊢ s ⇀⦇ NewConstitution dh      ,ENACT⦈  record s { constitution = dh , gid }
   Enact-HF        : ⟦ gid ⟧ᵉ ⊢ s ⇀⦇ TriggerHF v             ,ENACT⦈  record s { pv = v , gid }
   Enact-PParams   :
-    ⟦ gid ⟧ᵉ ⊢ s ⇀⦇ ChangePParams up h  ,ENACT⦈  record s { pparams = applyUpdate (proj₁ (s .pparams)) up , gid }
+    ⟦ gid ⟧ᵉ ⊢ s ⇀⦇ ChangePParams up  ,ENACT⦈  record s { pparams = applyUpdate (proj₁ (s .pparams)) up , gid }
   Enact-Wdrl      :
     let newWdrls = Σᵐᵛ[ x ← wdrl ᶠᵐ ] x
     in newWdrls ≤ s .treasury
+    -- TODO: put the treasury in the environment
     ────────────────────────────────
     ⟦ gid ⟧ᵉ ⊢ s ⇀⦇ TreasuryWdrl wdrl  ,ENACT⦈
       record s { withdrawals  = s .withdrawals  ∪⁺ wdrl

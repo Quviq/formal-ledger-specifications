@@ -58,13 +58,13 @@ record PParams : Set where
         -- Governance group
         drepThresholds    : DrepThresholds
         poolThresholds    : PoolThresholds
-        minCCSize         : ℕ
         ccTermLimit       : ℕ
         govExpiration     : ℕ
         govDeposit        : Coin
         drepDeposit       : Coin
         drepActivity      : Epoch
         minimumAVS        : Coin
+        minCCSize         : ℕ
 
 paramsWellFormed : PParams → Bool
 paramsWellFormed pp = ⌊ ¬? (0 ∈? setFromList
@@ -85,7 +85,7 @@ record PParamsDiff : Set₁ where
   field UpdateT : Set
         updateGroups : UpdateT → ℙ PParamGroup
         applyUpdate : PParams → UpdateT → PParams
-        ppdWellFormed : UpdateT → Bool
+        ppdWellFormed : UpdateT → Bool -- TODO: give this a definition
         ppdWellFormed⇒WF : ∀ {u} → ppdWellFormed u ≡ true → ∀ pp
                          → paramsWellFormed pp ≡ true
                          → paramsWellFormed (applyUpdate pp u) ≡ true

@@ -39,7 +39,7 @@ record RatifyEnv : Set where
   field stakeDistrs   : StakeDistrs
         currentEpoch  : Epoch
         dreps         : Credential ⇀ Epoch
-        ccHotKeys     : KeyHash ⇀ Maybe KeyHash
+        ccHotKeys     : Credential ⇀ Maybe Credential
 
 record RatifyState : Set where
   constructor ⟦_,_,_,_⟧ʳ
@@ -116,7 +116,7 @@ restrictedDists coins rank dists = dists -- record dists { drepStakeDistr = rest
         restrict dist = topNDRepDist rank dist ∪ᵐˡ mostStakeDRepDist dist coins
 
 CCData : Set
-CCData = Maybe (KeyHash ⇀ Epoch × R.ℚ)
+CCData = Maybe (Credential ⇀ Epoch × R.ℚ)
 
 module _ (Γ : RatifyEnv) (cc : CCData) (votes : (GovRole × Credential) ⇀ Vote) (ga : GovAction) where
 
@@ -125,14 +125,14 @@ module _ (Γ : RatifyEnv) (cc : CCData) (votes : (GovRole × Credential) ⇀ Vot
   roleVotes : GovRole → (GovRole × Credential) ⇀ Vote
   roleVotes r = filterᵐ (to-sp ((r ≟_) ∘ proj₁ ∘ proj₁)) votes
 
-  actualCCVote : KeyHash → Epoch → Vote
-  actualCCVote kh e = case ⌊ currentEpoch ≤ᵉ? e ⌋ ,′ lookupᵐ? ccHotKeys kh ⦃ _ ∈? _ ⦄ of λ where
-    (true , just (just hk)) → maybe′ id Vote.no $ lookupᵐ? votes (CC , (inj₁ hk)) ⦃ _ ∈? _ ⦄
-    _                       → Vote.abstain -- expired, no hot key or resigned
+  actualCCVote : Credential → Epoch → Vote
+  actualCCVote c e = case ⌊ currentEpoch ≤ᵉ? e ⌋ ,′ lookupᵐ? ccHotKeys c ⦃ _ ∈? _ ⦄ of λ where
+    (true , just (just c)) → maybe′ id Vote.no $ lookupᵐ? votes (CC , c) ⦃ _ ∈? _ ⦄
+    _                      → Vote.abstain -- expired, no hot key or resigned
 
   actualCCVotes : Credential ⇀ Vote
   actualCCVotes = case cc of λ where
-    (just (cc , _)) → mapKeys inj₁ (mapWithKey actualCCVote cc) (λ where _ _ refl → refl)
+    (just (cc , _)) → mapWithKey actualCCVote cc
     nothing         → ∅ᵐ
 
   actualPDRepVotes : VDeleg ⇀ Vote
@@ -146,7 +146,7 @@ module _ (Γ : RatifyEnv) (cc : CCData) (votes : (GovRole × Credential) ⇀ Vot
                   ∪ᵐˡ constMap (map (credVoter DRep) activeDReps) Vote.no
     where
       activeDReps : ℙ Credential
-      activeDReps = dom (filterᵐ (to-sp (currentEpoch ≤ᵉ?_ ∘ proj₂)) dreps ˢ)
+      activeDReps = dom (filterᵐ (to-sp (currentEpoch ≤ᵉ?_ ∘ proj₂)) dreps ˢ) -- TODO: add noGACounter
 
   actualVotes : VDeleg ⇀ Vote
   actualVotes = mapKeys (credVoter CC) actualCCVotes (λ where _ _ refl → refl)
@@ -233,7 +233,7 @@ verifyPrev NoConfidence         h es = let open EnactState es in h ≡ proj₂ c
 verifyPrev (NewCommittee _ _ _) h es = let open EnactState es in h ≡ proj₂ cc
 verifyPrev (NewConstitution _)  h es = let open EnactState es in h ≡ proj₂ constitution
 verifyPrev (TriggerHF _)        h es = let open EnactState es in h ≡ proj₂ pv
-verifyPrev (ChangePParams _ _)  h es = let open EnactState es in h ≡ proj₂ pparams
+verifyPrev (ChangePParams _)    h es = let open EnactState es in h ≡ proj₂ pparams
 verifyPrev (TreasuryWdrl _)     _ _  = ⊤
 verifyPrev Info                 _ _  = ⊤
 
@@ -242,7 +242,7 @@ delayingAction NoConfidence         = true
 delayingAction (NewCommittee _ _ _) = true
 delayingAction (NewConstitution _)  = true
 delayingAction (TriggerHF _)        = true
-delayingAction (ChangePParams _ _)  = false
+delayingAction (ChangePParams _)    = false
 delayingAction (TreasuryWdrl _)     = false
 delayingAction Info                 = false
 

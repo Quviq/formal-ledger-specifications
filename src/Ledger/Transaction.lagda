@@ -99,16 +99,17 @@ the transaction body are:
           txfee       : Coin
           mint        : Value
           txvldt      : Maybe Slot × Maybe Slot
-          txcerts     : List DCert
+          txcerts     : List DCert -- TODO: no duplicates
           txwdrls     : Wdrl
-          txvote      : List GovVote
-          txprop      : List GovProposal
+          txvote      : List GovVote -- TODO: enforce that we don't vote twice on the same action
+          txprop      : List GovProposal -- TODO: same
           txdonation  : ℕ
           txup        : Maybe Update
           txADhash    : Maybe ADHash
           netwrk      : Maybe Network
           txsize      : ℕ
           txid        : TxId
+          -- TODO: add treasury assertion
 
   record TxWitnesses : Set where
     field vkSigs   : VKey ⇀ Sig

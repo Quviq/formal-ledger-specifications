@@ -99,6 +99,7 @@ data _⊢_⇀⦇_,NEWEPOCH⦈_ : NewEpochEnv → NewEpochState → Epoch → New
         }
       ls' = record ls { govSt = govSt' ; utxoSt = utxoSt' ; certState = certState' }
       acnt' = record acnt { treasury = Acnt.treasury acnt + UTxOState.fees utxoSt + getCoin unclaimed }
+      -- TODO: pay out treasury withdrawals and set the map to empty
     in
     e ≡ sucᵉ lastEpoch
     → record { currentEpoch = e ; GState gState ; NewEpochEnv Γ }

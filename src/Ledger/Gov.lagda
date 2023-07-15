@@ -81,7 +81,7 @@ data _⊢_⇀⦇_,GOV'⦈_ : GovEnv × ℕ → GovState → GovVote ⊎ GovPropo
               addVote s aid role cred v
 
   GOV-Propose : ∀ {x k} → let open GovEnv Γ; open PParams pparams using (govExpiration; govDeposit) in
-    actionWellFormed a ≡ true
+    proposalWellFormed a ≡ true
     ────────────────────────────────
     (Γ , k) ⊢ s ⇀⦇ inj₂ record { returnAddr = addr ; action = a ; anchor = x ; prevAction = prev } ,GOV'⦈
               addAction s (govExpiration +ᵉ epoch) (txid , k) addr a prev
