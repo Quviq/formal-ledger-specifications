@@ -85,15 +85,6 @@ record PParams : Set where
         drepActivity       : Epoch
         minimumAVS         : Coin
 
-        -- Governance group
-        votingThresholds  : ℚ × ℚ
-        minCCSize         : ℕ
-        ccTermLimit       : ℕ
-        govExpiration     : ℕ
-        govDeposit        : Coin
-        drepDeposit       : Coin
-        drepActivity      : Epoch
-
         -- Script
         -- costmdls            : Language → CostModel (Does not work with DecEq)
         costmdls            : CostModel
@@ -101,7 +92,7 @@ record PParams : Set where
         maxTxExUnits        : ExUnits
         maxBlockExUnits     : ExUnits
         coinsPerUTxOWord    : Coin
-        collateralPercent   : ℕ
+        -- collateralPercent   : ℕ
         maxCollateralInputs : ℕ
 
 paramsWellFormed : PParams → Bool

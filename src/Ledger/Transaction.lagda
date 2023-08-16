@@ -55,10 +55,7 @@ the transaction body are:
   open EpochStructure epochStructure public
   open GlobalConstants globalConstants public
   field crypto                              : Crypto
-
-  open Crypto crypto public
-
-  field ss                                  : Ledger.Script.ScriptStructure crypto epochStructure
+        ss                                  : Ledger.Script.ScriptStructure crypto epochStructure
         adHashingScheme                     : isHashableSet AuxiliaryData
         ppHashingScheme                     : isHashableSet (Ledger.PParams.PParams crypto epochStructure ss)
         ppUpd                               : Ledger.PParams.PParamsDiff crypto epochStructure ss
@@ -73,8 +70,7 @@ the transaction body are:
   open TA ScriptHash
   open isHashableSet adHashingScheme renaming (THash to ADHash) public
 
-  field  ss            : Ledger.Script.ScriptStructure KeyHash ScriptHash Slot
-         tokenAlgebra  : TokenAlgebra
+  field tokenAlgebra  : TokenAlgebra
 
   open TokenAlgebra tokenAlgebra public
 

@@ -13,7 +13,7 @@ record indexOf : Set where
     indexOfDCert    : DCert → List DCert → Maybe Ix
     indexOfRwdAddr  : RwdAddr → Wdrl → Maybe Ix
     indexOfTxIn     : TxIn → ℙ TxIn → Maybe Ix
-    indexOfPolicyId : PolicyId → ℙ PolicyId → Maybe Ix
+    indexOfPolicyId : ScriptHash → ℙ ScriptHash → Maybe Ix
 
 record AbstractFunctions : Set where
   field txscriptfee : Prices → ExUnits → Coin

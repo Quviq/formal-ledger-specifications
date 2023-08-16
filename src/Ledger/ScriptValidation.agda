@@ -56,7 +56,7 @@ private macro
 data ScriptPurpose : Set where
   Cert  : DCert → ScriptPurpose
   Rwrd : RwdAddr → ScriptPurpose
-  Mint  : PolicyId → ScriptPurpose
+  Mint  : ScriptHash → ScriptPurpose
   Spend : TxIn → ScriptPurpose
 
 rdptr : TxBody → ScriptPurpose → Maybe RdmrPtr
@@ -175,7 +175,7 @@ scriptsNeeded : UTxO → TxBody → ℙ (ScriptPurpose × ScriptHash)
 scriptsNeeded utxo txb = mapPartial (λ x → spendScripts x (scriptOutsWithHash utxo)) (txins txb)
                          ∪ mapPartial (λ x → rwdScripts x) (dom $ proj₁ $ (txwdrls txb))
                          ∪ {!!}
-                         ∪ mapSet (λ x → (Mint x) , {!!}) (policies (mint txb))
+                         ∪ mapSet (λ x → (Mint x) , x) (policies (mint txb))
 
 
 collectPhaseTwoScriptInputs : PParams → Tx
