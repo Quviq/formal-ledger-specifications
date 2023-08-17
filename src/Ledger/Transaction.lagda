@@ -161,6 +161,7 @@ the transaction body are:
 
   txinsScript : ℙ TxIn → UTxO → ℙ TxIn
   txinsScript txins utxo = txins ∩ dom (proj₁ (scriptOuts utxo))
+
 \end{code}
 \end{figure*}
 \begin{code}[hide]

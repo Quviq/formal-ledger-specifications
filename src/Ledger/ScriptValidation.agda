@@ -168,20 +168,21 @@ rwdScripts a with isScriptRwdAddr? a
 ... | no ¬p = nothing
 ... | yes (SHisScript sh) = just (Rwrd a , sh)
 
-certScripts : Set
-certScripts = {!!}
+certScripts : DCert → Maybe (ScriptPurpose × ScriptHash)
+certScripts d with DelegateOrDeReg? d
+... | no ¬p = nothing
+certScripts (delegate (inj₁ x) x₁ x₂ x₃) | yes p = nothing
+certScripts (delegate (inj₂ y) x₁ x₂ x₃) | yes p = just (Cert (delegate (inj₂ y) x₁ x₂ x₃) , y)
+certScripts (deregdrep (inj₁ x)) | yes p = nothing
+certScripts (deregdrep (inj₂ y)) | yes p = just (Cert (deregdrep (inj₂ y)) , y)
 
 scriptsNeeded : UTxO → TxBody → ℙ (ScriptPurpose × ScriptHash)
 scriptsNeeded utxo txb = mapPartial (λ x → spendScripts x (scriptOutsWithHash utxo)) (txins txb)
                          ∪ mapPartial (λ x → rwdScripts x) (dom $ proj₁ $ (txwdrls txb))
-                         ∪ {!!}
+                         ∪ mapPartial (λ x → certScripts x) (setFromList $ txcerts txb)
                          ∪ mapSet (λ x → (Mint x) , x) (policies (mint txb))
-
 
 collectPhaseTwoScriptInputs : PParams → Tx
                                       → UTxO
                                       → List (Script × List Data × ExUnits × CostModel)
 collectPhaseTwoScriptInputs pp tx utxo = {!!}
-
-helpMe : Addr → Set
-helpMe = {!!}
