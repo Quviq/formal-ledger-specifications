@@ -104,7 +104,7 @@ balance utxo = Σᵐᵛ[ x ← utxo ᶠᵐ ] (getValue x)
 cbalance : UTxO → Coin
 cbalance utxo = coin (balance utxo)
 
-coinPolicies : ℙ PolicyId
+coinPolicies : ℙ ScriptHash
 coinPolicies = policies (inject 1)
 
 isAdaOnlyᵇ : Value → Bool
@@ -154,6 +154,7 @@ _≥ᵇ_ = flip _≤ᵇ_
 
 ≟-∅ᵇ : {A : Set} ⦃ _ : DecEq A ⦄ → (X : ℙ A) → Bool
 ≟-∅ᵇ X = ⌊ ≟-∅ {_} {X} ⌋
+
 -----------------------------------------------------
 
 feesOK : PParams → Tx → UTxO → Bool

@@ -78,6 +78,9 @@ abstract
   setFromList : {A : Set} → List A → ℙ A
   setFromList = id
 
+  ≟-∅ : {A : Set} ⦃ _ : DecEq A ⦄ → {X : ℙ A} → Dec (X ≡ ∅)
+  ≟-∅ = Decˡ.≟-∅
+
 open import Axiom.Set.Rel th public
   hiding (_∣'_; _↾'_)
 

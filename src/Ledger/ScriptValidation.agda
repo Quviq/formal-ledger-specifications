@@ -90,7 +90,7 @@ getDatum tx utxo _ = []
 
 
 record TxInfo : Set where
-  field realizedInputs : TxIn -- just to stop unification error for now
+  field realizedInputs : ℙ TxIn
         txouts  : Ix ⇀ TxOut
         fee     : Value
         mint    : Value
@@ -106,7 +106,7 @@ txInfo : Language → PParams
                   → Tx
                   → TxInfo
 txInfo l pp utxo tx = record
-                        { realizedInputs = {!!}
+                        { realizedInputs = txins txb
                         ; txouts = txouts txb
                         ; fee = inject (txfee txb)
                         ; mint = mint txb
@@ -119,8 +119,6 @@ txInfo l pp utxo tx = record
                         }
   where
     txb = body tx
-
-
 
 DelegateOrDeReg : DCert → Set
 DelegateOrDeReg (delegate x x₁ x₂ x₃) = ⊤
@@ -137,16 +135,6 @@ DelegateOrDeReg? (retirepool x x₁) = no (λ { ()})
 DelegateOrDeReg? (regdrep x x₁ x₂) = no (λ { ()})
 DelegateOrDeReg? (deregdrep x) = yes tt
 DelegateOrDeReg? (ccreghot x x₁) = no (λ { ()})
-
--- Need to add ScriptHash
---
-scriptsNeeded' : UTxO → TxBody → ℙ (ScriptPurpose)
-scriptsNeeded' utxo txb = mapSet (λ x → Spend x) (txinsScript (txins txb) utxo)
-                          ∪ mapSet (λ x → Rwrd x)
-                            (dom $ proj₁ $ (txwdrls txb) ∣' to-sp λ x → isScriptRwdAddr? x)
-                          ∪ mapSet (λ x → Cert x) (setFromList $ filter DelegateOrDeReg? (txcerts txb))
-                            -- , c ∈ cwitnedd cert ∩ AddrScript
-                          ∪ mapSet (λ x → Mint x) (policies (mint txb))
 
 UTxOSH  = TxIn ⇀ (TxOut × ScriptHash)
 
