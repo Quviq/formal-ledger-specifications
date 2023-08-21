@@ -148,6 +148,7 @@ Deposits = DepositPurpose ⇀ Coin
 \begin{code}
 record UTxOEnv : Set where
   field slot     : Slot
+        ppolicy  : Maybe ScriptHash
         pparams  : PParams
 \end{code}
 \emph{UTxO states}

@@ -229,22 +229,22 @@ expired : Epoch → GovActionState → Set
 expired current record { expiresIn = expiresIn } = expiresIn <ᵉ current
 
 verifyPrev : (a : GovAction) → NeedsHash a → EnactState → Set
-verifyPrev NoConfidence         h es = let open EnactState es in h ≡ proj₂ cc
-verifyPrev (NewCommittee _ _ _) h es = let open EnactState es in h ≡ proj₂ cc
-verifyPrev (NewConstitution _)  h es = let open EnactState es in h ≡ proj₂ constitution
-verifyPrev (TriggerHF _)        h es = let open EnactState es in h ≡ proj₂ pv
-verifyPrev (ChangePParams _ _)  h es = let open EnactState es in h ≡ proj₂ pparams
-verifyPrev (TreasuryWdrl _)     _ _  = ⊤
-verifyPrev Info                 _ _  = ⊤
+verifyPrev NoConfidence          h es = let open EnactState es in h ≡ proj₂ cc
+verifyPrev (NewCommittee _ _ _)  h es = let open EnactState es in h ≡ proj₂ cc
+verifyPrev (NewConstitution _ _) h es = let open EnactState es in h ≡ proj₂ constitution
+verifyPrev (TriggerHF _)         h es = let open EnactState es in h ≡ proj₂ pv
+verifyPrev (ChangePParams _ _)   h es = let open EnactState es in h ≡ proj₂ pparams
+verifyPrev (TreasuryWdrl _)      _ _  = ⊤
+verifyPrev Info                  _ _  = ⊤
 
 delayingAction : GovAction → Bool
-delayingAction NoConfidence         = true
-delayingAction (NewCommittee _ _ _) = true
-delayingAction (NewConstitution _)  = true
-delayingAction (TriggerHF _)        = true
-delayingAction (ChangePParams _ _)  = false
-delayingAction (TreasuryWdrl _)     = false
-delayingAction Info                 = false
+delayingAction NoConfidence          = true
+delayingAction (NewCommittee _ _ _)  = true
+delayingAction (NewConstitution _ _) = true
+delayingAction (TriggerHF _)         = true
+delayingAction (ChangePParams _ _)   = false
+delayingAction (TreasuryWdrl _)      = false
+delayingAction Info                  = false
 
 delayed : (a : GovAction) → NeedsHash a → EnactState → Bool → Set
 delayed a h es d = ¬ verifyPrev a h es ⊎ d ≡ true
