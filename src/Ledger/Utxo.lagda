@@ -53,18 +53,12 @@ instance
   HasCoin-Map : ∀ {A} → ⦃ DecEq A ⦄ → HasCoin (A ⇀ Coin)
   HasCoin-Map .getCoin s = Σᵐᵛ[ x ← s ᶠᵐ ] x
 
-isP2Script : Script → Bool
-isP2Script (inj₁ x) = false
-isP2Script (inj₂ y) = true
-
 isPhaseTwoScriptAddress : Tx → Addr → Bool
 isPhaseTwoScriptAddress tx a with isScriptAddr? a
 ... | no ¬p = false
-... | yes p with getScriptHash a p
-... | scriptHash with setToHashMap $ TxWitnesses.scripts (Tx.wits tx)
-... | m with _∈?_ scriptHash (Ledger.Prelude.map proj₁ $ m ˢ)
-... | no ¬p = false
-... | yes p₁ = isP2Script (lookupMap m p₁)
+... | yes p with lookupScriptHash (getScriptHash a p) tx
+... | nothing = false
+... | just s = isP2Script s
 
 totExUnits : Tx → ExUnits
 totExUnits tx = Σᵐ[ x ← TxWitnesses.txrdmrs (Tx.wits tx) ᶠᵐ ] (proj₂ (proj₂ x))

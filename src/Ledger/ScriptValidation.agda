@@ -90,7 +90,7 @@ getDatum tx utxo _ = []
 
 
 record TxInfo : Set where
-  field realizedInputs : ℙ TxIn
+  field realizedInputs : UTxO
         txouts  : Ix ⇀ TxOut
         fee     : Value
         mint    : Value
@@ -106,7 +106,7 @@ txInfo : Language → PParams
                   → Tx
                   → TxInfo
 txInfo l pp utxo tx = record
-                        { realizedInputs = txins txb
+                        { realizedInputs = utxo ∣ (txins txb)
                         ; txouts = txouts txb
                         ; fee = inject (txfee txb)
                         ; mint = mint txb
@@ -170,7 +170,31 @@ scriptsNeeded utxo txb = mapPartial (λ x → spendScripts x (scriptOutsWithHash
                          ∪ mapPartial (λ x → certScripts x) (setFromList $ txcerts txb)
                          ∪ mapSet (λ x → (Mint x) , x) (policies (mint txb))
 
+toData : ∀{A : Set} → A → Data
+toData = {!!}
+
+-- We need to add toData to define this
+valContext : TxInfo → ScriptPurpose → Data
+valContext txinfo sp = toData (txinfo , sp)
+
+scriptHashInTx : ScriptHash → Tx → Bool
+scriptHashInTx sh tx = ⌊ sh ∈? (Ledger.Prelude.map proj₁ $ m ˢ) ⌋
+  where
+    m = setToHashMap $ TxWitnesses.scripts (Tx.wits tx)
+
+collectPhaseTwoScriptInputs' : PParams → Tx
+                                      → UTxO
+                                      → (ScriptPurpose × ScriptHash)
+                                      → Maybe (Script × List Data × ExUnits × CostModel)
+collectPhaseTwoScriptInputs' pp tx utxo (sp , sh) with lookupScriptHash sh tx
+... | nothing = nothing
+... | just s with isP2Script s
+... | false = nothing
+... | true = just (s , (((getDatum tx utxo sp) ++ {!!}) , {!!} , {!cm!}))
+
 collectPhaseTwoScriptInputs : PParams → Tx
                                       → UTxO
                                       → List (Script × List Data × ExUnits × CostModel)
-collectPhaseTwoScriptInputs pp tx utxo = {!!}
+collectPhaseTwoScriptInputs pp tx utxo with scriptsNeeded utxo (body tx)
+... | ans with mapSet (λ { (sp , sh) → getDatum tx utxo sp}) ans
+... | ans2 = {!!}

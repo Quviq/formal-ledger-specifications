@@ -17,8 +17,10 @@ import Ledger.Script
 import Ledger.GovernanceActions
 import Ledger.TokenAlgebra as TA
 
+
 open import Tactic.Derive.DecEq
 open import MyDebugOptions
+open import Relation.Nullary.Decidable using (⌊_⌋)
 
 data Tag : Set where
   Spend Mint Cert Rewrd : Tag
@@ -161,6 +163,16 @@ the transaction body are:
 
   txinsScript : ℙ TxIn → UTxO → ℙ TxIn
   txinsScript txins utxo = txins ∩ dom (proj₁ (scriptOuts utxo))
+
+  lookupScriptHash : ScriptHash → Tx → Maybe Script
+  lookupScriptHash sh tx with setToHashMap $ TxWitnesses.scripts (Tx.wits tx)
+  ... | m with sh ∈? (Ledger.Prelude.map proj₁ $ m ˢ)
+  ... | no ¬p = nothing
+  ... | yes p = just (lookupMap m p)
+
+  isP2Script : Script → Bool
+  isP2Script (inj₁ x) = false
+  isP2Script (inj₂ y) = true
 
 \end{code}
 \end{figure*}
