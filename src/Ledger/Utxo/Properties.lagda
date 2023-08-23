@@ -8,8 +8,8 @@ open import Ledger.Transaction
 
 module Ledger.Utxo.Properties (txs : TransactionStructure) where
 
-open import Prelude hiding (_+_)
-open import Ledger.Prelude renaming (_+_ to _+ℕ_)
+open import Prelude
+open import Ledger.Prelude
 
 import Data.List as List
 import Data.Nat as ℕ
@@ -45,23 +45,6 @@ open Tactic.EquationalReasoning.≡-Reasoning {A = ℕ} (solve-macro (quoteTerm 
 instance
   _ = TokenAlgebra.Value-CommutativeMonoid tokenAlgebra
   _ = +-0-monoid
-
-record Add (A : Set) : Set where
-  infixl 7 _+_
-  field _+_ : A → A → A
-
-open Add ⦃ ... ⦄ public
-
-instance
-  addInt : Add ℤ
-  addInt = record { _+_ = ℤ._+_ }
-
-  addNat : Add ℕ
-  addNat = record { _+_ = _+ℕ_ }
-
-  addCommMon : Add (TokenAlgebra.Value tokenAlgebra)
-  addCommMon = record { _+_ = _+ᵛ_ }
-
 
 
 private variable
