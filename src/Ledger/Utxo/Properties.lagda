@@ -11,35 +11,29 @@ module Ledger.Utxo.Properties (txs : TransactionStructure) where
 open import Prelude
 open import Ledger.Prelude
 
-import Data.List as List
 import Data.Nat as ℕ
-open import Algebra.Morphism
-open import Data.Nat.Properties using
-  (+-0-commutativeMonoid; +-0-monoid; +-comm; +-identityʳ; +-assoc; +-∸-assoc; m≤n⇒m≤n+o; ≤″⇒≤; m+[n∸m]≡n)
-open import Data.Sign using (Sign)
-open import Data.Integer as ℤ using (ℤ; _⊖_)
-open import Data.Integer.Ext
+open import Algebra.Morphism            using (module MonoidMorphisms; IsMagmaHomomorphism)
+open import Data.Nat.Properties         hiding (_≟_)
+open import Data.Sign                   using (Sign)
+open import Data.Integer as ℤ           using (ℤ; _⊖_)
+open import Data.Integer.Ext            using (posPart; negPart)
 import Data.Integer.Properties as ℤ
-open import Interface.ComputationalRelation
-open import Relation.Binary
-open import Tactic.Cong
-open import Tactic.EquationalReasoning
-open import Tactic.MonoidSolver
+open import Relation.Binary             using (IsEquivalence)
+open import Tactic.Cong                 using (cong!)
+open import Tactic.EquationalReasoning  using (module ≡-Reasoning)
+open import Tactic.MonoidSolver         using (solve-macro)
 
 open TransactionStructure txs
 
-open import Ledger.PParams epochStructure
-open import Ledger.TokenAlgebra ScriptHash
+open import Ledger.PParams epochStructure using (PParams)
+open import Ledger.TokenAlgebra ScriptHash using (TokenAlgebra)
 open import Ledger.Utxo txs renaming (Computational-UTXO to Computational-UTXO')
 
 open TxBody
-open TxWitnesses
-open Tx
 
 open Equivalence
 open Properties
 
-import Data.Nat.Tactic.RingSolver as ℕ
 open Tactic.EquationalReasoning.≡-Reasoning {A = ℕ} (solve-macro (quoteTerm +-0-monoid))
 
 instance
@@ -49,14 +43,11 @@ instance
 
 private variable
   tx : TxBody
-  utxo utxo' utxo1 utxo2 : UTxO
-  fee fee' fees fees' : Coin
-  utxoState utxoState' utxoState1 utxoState2 : UTxOState
+  utxo utxo' : UTxO
+  utxoState utxoState' : UTxOState
   deposits deposits' : DepositPurpose ⇀ Coin
-  donation donations donations' : Coin
+  fees fees' donations donations' : Coin
   Γ : UTxOEnv
-  s s' : UTxOState
-  A : Set
 
 abstract
   Computational-UTXO : Computational _⊢_⇀⦇_,UTXO⦈_
