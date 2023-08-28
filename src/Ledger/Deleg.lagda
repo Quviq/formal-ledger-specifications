@@ -337,18 +337,27 @@ instance
     with computeProof pp stᵖ (retirepool c e)
   ... | just (stᵖ'' , h') rewrite computational⇒rightUnique it h h' = {! !}
   ... | nothing = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (regdrep c d an) st' (CERT-vdel h)
-    with computeProof Γ stᵍ (regdrep c d an)
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (regdrep c d an) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
+    with computeProof Γ stᵍ (regdrep c d an) in eq
   ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (deregdrep c) st' (CERT-vdel h)
-    with computeProof Γ stᵍ (deregdrep c)
+  ... | nothing = case begin nothing ≡˘⟨ map-nothing eq ⟩
+                             _       ≡⟨ completeness Γ stᵍ (regdrep c d an) stᵍ' h ⟩
+                             just stᵍ' ∎
+                    of λ ()
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (deregdrep c) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
+    with computeProof Γ stᵍ (deregdrep c) in eq
   ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (ccreghot (inj₁ kh) mkh) st' (CERT-vdel h)
-    with computeProof Γ stᵍ (ccreghot (inj₁ kh) mkh)
+  ... | nothing = case begin nothing ≡˘⟨ map-nothing eq ⟩
+                             _       ≡⟨ completeness Γ stᵍ (deregdrep c) stᵍ' h ⟩
+                             just stᵍ' ∎
+                    of λ ()
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (ccreghot (inj₁ kh) mkh) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
+    with computeProof Γ stᵍ (ccreghot (inj₁ kh) mkh) in eq
   ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing = {!!}
+  ... | nothing = case begin nothing ≡˘⟨ map-nothing eq ⟩
+                             _       ≡⟨ completeness Γ stᵍ (ccreghot (inj₁ kh) mkh) stᵍ' h ⟩
+                             just stᵍ' ∎
+                    of λ ()
 
 --Computational-CERTS : Computational _⊢_⇀⦇_,CERTS⦈_
 --Computational-CERTS .compute     = {!!}
