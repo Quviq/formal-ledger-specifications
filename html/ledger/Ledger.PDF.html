@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Ledger.PDF</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Background">\documentclass[11pt,a4paper,dvipsnames,twosided]{article}
+\usepackage{unicode-math}
+\setsansfont{XITSMath-Regular.otf}
+
+\usepackage{newunicodechar}
+\usepackage{longtable}
+\newunicodechar{ᵇ}{\ensuremath{^b}}
+\newunicodechar{ᶜ}{\ensuremath{^c}}
+\newunicodechar{ᵈ}{\ensuremath{^d}}
+\newunicodechar{ᵉ}{\ensuremath{^e}}
+\newunicodechar{ᶠ}{\ensuremath{^f}}
+\newunicodechar{ᵐ}{\ensuremath{^m}}
+\newunicodechar{ᵖ}{\ensuremath{^p}}
+\newunicodechar{ᵘ}{\ensuremath{^u}}
+\newunicodechar{ᵛ}{\ensuremath{^v}}
+\newunicodechar{⁺}{\ensuremath{^+}}
+\newunicodechar{⁻}{\ensuremath{^-}}
+\newunicodechar{¹}{\ensuremath{^1}}
+\newunicodechar{₁}{\ensuremath{_1}}
+\newunicodechar{₂}{\ensuremath{_2}}
+\newunicodechar{₃}{\ensuremath{_3}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≢}{\ensuremath{\nequiv}}
+\newunicodechar{❴}{\ensuremath{\{}}
+\newunicodechar{❵}{\ensuremath{\}}}
+\newunicodechar{⊢}{\ensuremath{\vdash}}
+\newunicodechar{⇀}{\ensuremath{\rightharpoonup}}
+% TODO: figure something out for the parentheses - the font doesn&#39;t support those in one place
+\newunicodechar{⦇}{\ensuremath{(}}
+\newunicodechar{⦈}{\ensuremath{)}}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{float}
+\floatstyle{boxed}
+\restylefloat{figure}
+
+\usepackage{iohk}
+\usepackage{fls-macros}
+\usepackage[hidelinks]{hyperref}
+\usepackage[links]{agda}
+
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\TxBody}{\type{TxBody}}
+\newcommand{\TxWitness}{\type{TxWitness}}
+\newcommand{\Tx}{\type{Tx}}
+\newcommand{\Ix}{\type{Ix}}
+\newcommand{\TxId}{\type{TxId}}
+\newcommand{\Addr}{\type{Addr}}
+\newcommand{\UTxO}{\type{UTxO}}
+\newcommand{\Coin}{\type{Coin}}
+\newcommand{\TxIn}{\type{TxIn}}
+\newcommand{\TxOut}{\type{TxOut}}
+\newcommand{\UTxOEnv}{\type{UTxOEnv}}
+\newcommand{\UTxOState}{\ensuremath{\type{UTxOState}}}
+
+%%
+%% Functions
+%%
+\newcommand{\txins}[1]{\fun{txins}~ \var{#1}}
+\newcommand{\txouts}[1]{\fun{txouts}~ \var{#1}}
+\newcommand{\txid}[1]{\fun{txid}~ \var{#1}}
+\newcommand{\outs}[1]{\fun{outs}~ \var{#1}}
+\newcommand{\balance}[1]{\fun{balance}~ \var{#1}}
+\newcommand{\txfee}[1]{\fun{txfee}~ \var{#1}}
+
+\newtheorem{property}{Property}[section]
+
+%% -- DEFINITIONS -----------------------------------------------------------
+%% Set the desired typeface of defined terms here and, at the
+%% first occurrence of such a term, enclose it in `\defn{...}`.
+\newcommand{\defn}[1]{\textit{#1}}   %  defined terms are typeset in italics
+%% \newcommand{\defn}[1]{\textbf{#1}}   %  defined terms are typeset in bold
+
+%% -- For typesetting an Agda field name along with its type -----------------
+\newcommand{\FieldTyped}[2]{\AgdaField{#1}\,\AgdaSymbol{:}\,\AgdaDatatype{#2}}
+
+\begin{document}
+\tableofcontents
+
+</a><a id="2712" class="Markup">\begin{code}[hide]</a>
+<a id="2731" class="Symbol">{-#</a> <a id="2735" class="Keyword">OPTIONS</a> <a id="2743" class="Pragma">--safe</a> <a id="2750" class="Symbol">#-}</a>
+
+<a id="2755" class="Keyword">open</a> <a id="2760" class="Keyword">import</a> <a id="2767" href="Ledger.Transaction.html" class="Module">Ledger.Transaction</a>
+
+<a id="2787" class="Keyword">module</a> <a id="2794" href="Ledger.PDF.html" class="Module">Ledger.PDF</a> <a id="2805" class="Symbol">(</a><a id="2806" href="Ledger.PDF.html#2806" class="Bound">txs</a> <a id="2810" class="Symbol">:</a> <a id="2812" href="Ledger.Transaction.html#549" class="Record">TransactionStructure</a><a id="2832" class="Symbol">)</a> <a id="2834" class="Keyword">where</a>
+
+<a id="2841" class="Keyword">open</a> <a id="2846" class="Keyword">import</a> <a id="2853" href="Ledger.BaseTypes.html" class="Module">Ledger.BaseTypes</a>
+<a id="2870" class="Keyword">open</a> <a id="2875" class="Keyword">import</a> <a id="2882" href="Ledger.Introduction.html" class="Module">Ledger.Introduction</a>
+
+<a id="2903" class="Keyword">open</a> <a id="2908" class="Keyword">import</a> <a id="2915" href="Ledger.Utxo.html" class="Module">Ledger.Utxo</a> <a id="2927" href="Ledger.PDF.html#2806" class="Bound">txs</a>
+<a id="2931" class="Keyword">open</a> <a id="2936" class="Keyword">import</a> <a id="2943" href="Ledger.Utxow.html" class="Module">Ledger.Utxow</a> <a id="2956" href="Ledger.PDF.html#2806" class="Bound">txs</a>
+<a id="2960" class="Keyword">open</a> <a id="2965" class="Keyword">import</a> <a id="2972" href="Ledger.Deleg.html" class="Module">Ledger.Deleg</a>
+<a id="2985" class="Keyword">open</a> <a id="2990" class="Keyword">import</a> <a id="2997" href="Ledger.Chain.html" class="Module">Ledger.Chain</a> <a id="3010" href="Ledger.PDF.html#2806" class="Bound">txs</a>
+
+<a id="3015" class="Keyword">open</a> <a id="3020" class="Keyword">import</a> <a id="3027" href="Ledger.PPUp.html" class="Module">Ledger.PPUp</a>
+<a id="3039" class="Keyword">open</a> <a id="3044" class="Keyword">import</a> <a id="3051" href="Ledger.PPUp.Properties.html" class="Module">Ledger.PPUp.Properties</a>
+
+<a id="3075" class="Keyword">open</a> <a id="3080" class="Keyword">import</a> <a id="3087" href="Ledger.Ledger.Properties.html" class="Module">Ledger.Ledger.Properties</a>
+
+<a id="3113" class="Keyword">open</a> <a id="3118" class="Keyword">import</a> <a id="3125" href="Ledger.TokenAlgebra.ValueSet.html" class="Module">Ledger.TokenAlgebra.ValueSet</a>
+<a id="3154" class="Markup">\end{code}</a><a id="3164" class="Background">
+
+\include{Ledger/Introduction}
+\include{Ledger/Crypto}
+\include{Ledger/BaseTypes}
+\include{Ledger/TokenAlgebra}
+\include{Ledger/Address}
+\include{Ledger/Script}
+\include{Ledger/GovernanceActions}
+\include{Ledger/PParams}
+\include{Ledger/Transaction}
+\include{Ledger/Utxo}
+\include{Ledger/Utxow}
+\include{Ledger/Deleg}
+\include{Ledger/Ledger}
+\include{Ledger/Ratify}
+\include{Ledger/Chain}
+
+\section{Properties}
+\input{Ledger/Utxo/Properties}
+
+\end{document}
+</a></pre></body></html>

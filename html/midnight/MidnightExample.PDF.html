@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>MidnightExample.PDF</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Background">\documentclass[11pt,a4paper,dvipsnames,twosided]{article}
+\usepackage{unicode-math}
+\setsansfont{XITSMath-Regular.otf}
+
+\usepackage{newunicodechar}
+\newunicodechar{ᵇ}{\ensuremath{^b}}
+\newunicodechar{ᵈ}{\ensuremath{^d}}
+\newunicodechar{ᵐ}{\ensuremath{^m}}
+\newunicodechar{ᵖ}{\ensuremath{^p}}
+\newunicodechar{₁}{\ensuremath{_1}}
+\newunicodechar{₂}{\ensuremath{_2}}
+\newunicodechar{₃}{\ensuremath{_3}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≢}{\ensuremath{\nequiv}}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{float}
+\floatstyle{boxed}
+\restylefloat{figure}
+
+\usepackage{iohk}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[links]{agda}
+
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\TxBody}{\type{TxBody}}
+\newcommand{\TxWitness}{\type{TxWitness}}
+\newcommand{\Tx}{\type{Tx}}
+\newcommand{\Ix}{\type{Ix}}
+\newcommand{\TxId}{\type{TxId}}
+\newcommand{\Addr}{\type{Addr}}
+\newcommand{\UTxO}{\type{UTxO}}
+\newcommand{\Coin}{\type{Coin}}
+\newcommand{\TxIn}{\type{TxIn}}
+\newcommand{\TxOut}{\type{TxOut}}
+\newcommand{\UTxOEnv}{\type{UTxOEnv}}
+\newcommand{\UTxOState}{\ensuremath{\type{UTxOState}}}
+
+%%
+%% Functions
+%%
+\newcommand{\txins}[1]{\fun{txins}~ \var{#1}}
+\newcommand{\txouts}[1]{\fun{txouts}~ \var{#1}}
+\newcommand{\txid}[1]{\fun{txid}~ \var{#1}}
+\newcommand{\outs}[1]{\fun{outs}~ \var{#1}}
+\newcommand{\balance}[1]{\fun{balance}~ \var{#1}}
+\newcommand{\txfee}[1]{\fun{txfee}~ \var{#1}}
+
+\newcommand{\wcard}[0]{\rule[-.5mm]{2mm}{.2mm}}
+\newcommand{\leteq}{\ensuremath{\mathrel{\mathop:}=}}
+
+\newtheorem{property}{Property}[section]
+
+
+\begin{document}
+
+</a><a id="1621" class="Markup">\begin{code}[hide]</a>
+<a id="1640" class="Symbol">{-#</a> <a id="1644" class="Keyword">OPTIONS</a> <a id="1652" class="Pragma">--safe</a> <a id="1659" class="Symbol">#-}</a>
+
+<a id="1664" class="Keyword">module</a> <a id="1671" href="MidnightExample.PDF.html" class="Module">MidnightExample.PDF</a> <a id="1691" class="Keyword">where</a>
+
+<a id="1698" class="Keyword">open</a> <a id="1703" class="Keyword">import</a> <a id="1710" href="MidnightExample.Ledger.html" class="Module">MidnightExample.Ledger</a>
+<a id="1733" class="Markup">\end{code}</a><a id="1743" class="Background">
+
+\include{MidnightExample/Ledger}
+
+\end{document}
+</a></pre></body></html>

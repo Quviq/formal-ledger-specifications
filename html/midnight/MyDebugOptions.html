@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>MyDebugOptions</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--safe</a> <a id="20" class="Pragma">--without-K</a> <a id="32" class="Symbol">#-}</a>
+<a id="36" class="Keyword">module</a> <a id="43" href="MyDebugOptions.html" class="Module">MyDebugOptions</a> <a id="58" class="Keyword">where</a>
+
+<a id="65" class="Keyword">open</a> <a id="70" class="Keyword">import</a> <a id="77" href="Prelude.html" class="Module">Prelude</a>
+
+<a id="86" class="Keyword">open</a> <a id="91" class="Keyword">import</a> <a id="98" href="Reflection.Debug.html" class="Module">Reflection.Debug</a>
+
+<a id="116" class="Keyword">instance</a>
+  <a id="defaultDebugOptionsI"></a><a id="127" href="MyDebugOptions.html#127" class="Function">defaultDebugOptionsI</a> <a id="148" class="Symbol">:</a> <a id="150" href="Reflection.Debug.html#2344" class="Record">DebugOptions</a>
+  <a id="165" href="MyDebugOptions.html#127" class="Function">defaultDebugOptionsI</a> <a id="186" class="Symbol">=</a> <a id="188" class="Keyword">record</a> <a id="195" href="Reflection.Debug.html#2478" class="Function">defaultDebugOptions</a>
+    <a id="219" class="Symbol">{</a> <a id="221" href="Reflection.Debug.html#2409" class="Field">selection</a> <a id="231" class="Symbol">=</a> <a id="233" href="Reflection.Debug.html#1371" class="InductiveConstructor">All</a>
+    <a id="241" class="Symbol">;</a> <a id="243" href="Reflection.Debug.html#2440" class="Field">filter</a> <a id="250" class="Symbol">=</a> <a id="252" href="Algebra.Lattice.Bundles.html#5795" class="Function">Filter.⊥</a> <a id="261" class="Symbol">}</a>
+</pre></body></html>

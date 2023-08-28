@@ -1,0 +1,11 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="utf-8"><title>Tactic.Defaults</title><link rel="stylesheet" href="Agda.css"></head><body><pre class="Agda"><a id="1" class="Symbol">{-#</a> <a id="5" class="Keyword">OPTIONS</a> <a id="13" class="Pragma">--safe</a> <a id="20" class="Pragma">--without-K</a> <a id="32" class="Symbol">#-}</a>
+<a id="36" class="Keyword">module</a> <a id="43" href="Tactic.Defaults.html" class="Module">Tactic.Defaults</a> <a id="59" class="Keyword">where</a>
+
+<a id="66" class="Keyword">open</a> <a id="71" class="Keyword">import</a> <a id="78" href="Reflection.Debug.html" class="Module">Reflection.Debug</a>
+
+<a id="96" class="Comment">-- There should only ever be one instance, with this being convenient</a>
+<a id="166" class="Comment">-- to tweak all at once</a>
+<a id="190" class="Keyword">instance</a>
+  <a id="defaultDebugOptionsI"></a><a id="201" href="Tactic.Defaults.html#201" class="Function">defaultDebugOptionsI</a> <a id="222" class="Symbol">=</a> <a id="224" class="Keyword">record</a> <a id="231" href="Reflection.Debug.html#2478" class="Function">defaultDebugOptions</a> <a id="251" class="Symbol">{</a> <a id="253" href="Reflection.Debug.html#2409" class="Field">selection</a> <a id="263" class="Symbol">=</a> <a id="265" href="Reflection.Debug.html#1371" class="InductiveConstructor">All</a> <a id="269" class="Symbol">;</a> <a id="271" href="Reflection.Debug.html#2440" class="Field">filter</a> <a id="278" class="Symbol">=</a> <a id="280" href="Algebra.Lattice.Bundles.html#5795" class="Function">Filter.⊥</a> <a id="289" class="Symbol">}</a>
+</pre></body></html>
