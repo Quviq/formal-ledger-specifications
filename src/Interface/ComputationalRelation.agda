@@ -97,3 +97,11 @@ module _ {STS : C → S → Sig → S → Set} (comp comp' : Computational STS) 
 Computational⇒Dec' : ⦃ _ : DecEq S ⦄ {STS : C → S → Sig → S → Set} ⦃ comp : Computational STS ⦄
                       → Dec (STS c s sig s')
 Computational⇒Dec' ⦃ comp = comp ⦄ = Computational⇒Dec comp
+
+module _ {STS : C → S → Sig → S → Set} ⦃ comp : Computational' STS ⦄ where
+
+  open Computational' comp
+
+  computeProof-complete : STS c s sig s' → ∃[ h ] computeProof c s sig ≡ just (s' , h)
+  computeProof-complete {c} {s} {sig} {s'} h with computeProof c s sig | completeness c s sig s' h
+  ... | just (_ , h') | refl = h' , refl

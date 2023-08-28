@@ -306,9 +306,6 @@ instance
 
 open ≡-Reasoning
 
--- Can we build this?
--- (h : STS c s sig s') → ∃[ h ] computeProof c s sig ≡ just (s' , h)
-
 instance
   Computational'-CERT : Computational' _⊢_⇀⦇_,CERT⦈_
   Computational'-CERT .computeProof Γ@(⟦ e , pp , vs ⟧ᶜ) ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert
@@ -317,47 +314,27 @@ instance
   ... | nothing      | just (_ , h) | _            = just (_ , CERT-pool h)
   ... | nothing      | nothing      | just (_ , h) = just (_ , CERT-vdel h)
   ... | nothing      | nothing      | nothing      = nothing
-  Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (delegate c mv mc d) ⟦ stᵈ' , stᵖ , stᵍ ⟧ᶜ (CERT-deleg h)
-    with computeProof pp stᵈ (delegate c mv mc d) in eq
-  ... | just (stᵈ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing =
-    case begin nothing ≡˘⟨ map-nothing eq ⟩
-               _       ≡⟨ completeness pp stᵈ (delegate c mv mc d) stᵈ' h ⟩
-               just stᵈ' ∎
-      of λ ()
-  Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (regpool c poolParams) ⟦ stᵈ , stᵖ' , stᵍ ⟧ᶜ (CERT-pool h)
-    with computeProof pp stᵖ (regpool c poolParams) in eq
-  ... | just (stᵖ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing =
-    case begin nothing ≡˘⟨ map-nothing eq ⟩
-               _       ≡⟨ completeness pp stᵖ (regpool c poolParams) stᵖ' h ⟩
-               just stᵖ' ∎
-      of λ ()
-  Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (retirepool c e) ⟦ stᵈ , stᵖ' , stᵍ ⟧ᶜ (CERT-pool h) -- = {!computeProof pp stᵖ (retirepool c e)!}
-    with computeProof pp stᵖ (retirepool c e)
-  ... | just (stᵖ'' , h') rewrite computational⇒rightUnique it h h' = {! !}
-  ... | nothing = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (regdrep c d an) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
-    with computeProof Γ stᵍ (regdrep c d an) in eq
-  ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing = case begin nothing ≡˘⟨ map-nothing eq ⟩
-                             _       ≡⟨ completeness Γ stᵍ (regdrep c d an) stᵍ' h ⟩
-                             just stᵍ' ∎
-                    of λ ()
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (deregdrep c) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
-    with computeProof Γ stᵍ (deregdrep c) in eq
-  ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing = case begin nothing ≡˘⟨ map-nothing eq ⟩
-                             _       ≡⟨ completeness Γ stᵍ (deregdrep c) stᵍ' h ⟩
-                             just stᵍ' ∎
-                    of λ ()
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (ccreghot (inj₁ kh) mkh) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
-    with computeProof Γ stᵍ (ccreghot (inj₁ kh) mkh) in eq
-  ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
-  ... | nothing = case begin nothing ≡˘⟨ map-nothing eq ⟩
-                             _       ≡⟨ completeness Γ stᵍ (ccreghot (inj₁ kh) mkh) stᵍ' h ⟩
-                             just stᵍ' ∎
-                    of λ ()
+  Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert@(delegate c mv mc d) ⟦ stᵈ' , stᵖ , stᵍ ⟧ᶜ (CERT-deleg h)
+    with computeProof pp stᵈ dCert | computeProof-complete h
+  ... | just _ | _ , refl = refl
+  Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert@(regpool c poolParams) ⟦ stᵈ , stᵖ' , stᵍ ⟧ᶜ (CERT-pool h)
+    with computeProof pp stᵖ dCert | computeProof-complete h
+  ... | just _ | _ , refl = refl
+  Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert@(retirepool c e) ⟦ stᵈ , stᵖ' , stᵍ ⟧ᶜ (CERT-pool h)
+    with computeProof-complete h
+  ... | _ , refl = refl
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert@(regdrep c d an) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
+    with computeProof Γ stᵍ dCert | computeProof-complete h
+  ... | just _ | _ , refl = refl
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert@(deregdrep c) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
+    with computeProof Γ stᵍ dCert | computeProof-complete h
+  ... | just _ | _ , refl = refl
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ dCert@(ccreghot (inj₁ kh) mkh) ⟦ stᵈ , stᵖ , stᵍ' ⟧ᶜ (CERT-vdel h)
+    with computeProof Γ stᵍ dCert | computeProof-complete h
+  ... | just _ | _ , refl = refl
+
+  Computational-CERT : Computational _⊢_⇀⦇_,CERT⦈_
+  Computational-CERT = fromComputational' Computational'-CERT
 
 --Computational-CERTS : Computational _⊢_⇀⦇_,CERTS⦈_
 --Computational-CERTS .compute     = {!!}
