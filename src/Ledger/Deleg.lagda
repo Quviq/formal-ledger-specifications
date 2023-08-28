@@ -334,10 +334,21 @@ instance
                just stᵖ' ∎
       of λ ()
   Computational'-CERT .completeness ⟦ _ , pp , _ ⟧ᶜ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (retirepool c e) ⟦ stᵈ , stᵖ' , stᵍ ⟧ᶜ (CERT-pool h) -- = {!computeProof pp stᵖ (retirepool c e)!}
-    = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (regdrep c d an) st' (CERT-vdel p) = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (deregdrep c) st' (CERT-vdel p) = {!!}
-  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (ccreghot (inj₁ kh) mkh) st' (CERT-vdel p) = {!!}
+    with computeProof pp stᵖ (retirepool c e)
+  ... | just (stᵖ'' , h') rewrite computational⇒rightUnique it h h' = {! !}
+  ... | nothing = {!!}
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (regdrep c d an) st' (CERT-vdel h)
+    with computeProof Γ stᵍ (regdrep c d an)
+  ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
+  ... | nothing = {!!}
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (deregdrep c) st' (CERT-vdel h)
+    with computeProof Γ stᵍ (deregdrep c)
+  ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
+  ... | nothing = {!!}
+  Computational'-CERT .completeness Γ ⟦ stᵈ , stᵖ , stᵍ ⟧ᶜ (ccreghot (inj₁ kh) mkh) st' (CERT-vdel h)
+    with computeProof Γ stᵍ (ccreghot (inj₁ kh) mkh)
+  ... | just (stᵍ'' , h') rewrite computational⇒rightUnique it h h' = refl
+  ... | nothing = {!!}
 
 --Computational-CERTS : Computational _⊢_⇀⦇_,CERTS⦈_
 --Computational-CERTS .compute     = {!!}
