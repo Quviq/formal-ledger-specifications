@@ -274,7 +274,32 @@ data _⊢_⇀⦇_,UTXO⦈_ where
 \begin{code}[hide]
 -- TODO: This can't be moved into Properties because it breaks. Move
 -- this once this is fixed.
-unquoteDecl Computational-UTXO = deriveComputational (quote _⊢_⇀⦇_,UTXO⦈_) Computational-UTXO
+-- unquoteDecl Computational-UTXO = deriveComputational (quote _⊢_⇀⦇_,UTXO⦈_) Computational-UTXO
+
+instance
+  Computational'-UTXO : Computational' _⊢_⇀⦇_,UTXO⦈_
+  Computational'-UTXO .Computational'.computeProof Γ s tx
+    with  ¿ txins tx ≢ ∅ ¿
+       |  ¿ txins tx ⊆ dom (UTxOState.utxo s ˢ) ¿
+       |  ¿ inInterval (UTxOEnv.slot Γ) (txvldt tx) ¿
+       |  ¿ minfee (UTxOEnv.pparams Γ) tx ≤ txfee tx ¿
+       |  ¿ consumed (UTxOEnv.pparams Γ) s tx ≡ produced (UTxOEnv.pparams Γ) s tx ¿
+       |  ¿ coin (mint tx) ≡ 0 ¿
+       |  ¿ txsize tx ≤ maxTxSize (UTxOEnv.pparams Γ) ¿
+  ... | yes p₀ | yes p₁ | yes p₂ | yes p₃ | yes p₄ | yes p₅ | yes p₆ = just (_ , UTXO-inductive p₀ p₁ p₂ p₃ p₄ p₅ p₆)
+  ... | _ | _ | _ | _ | _ | _ | _ = nothing
+
+  Computational'-UTXO .Computational'.completeness Γ s tx s' h@(UTXO-inductive q₀ q₁ q₂ q₃ q₄ q₅ q₆)
+    with  ¿ txins tx ≢ ∅ ¿
+       |  ¿ txins tx ⊆ dom (UTxOState.utxo s ˢ) ¿
+       |  ¿ inInterval (UTxOEnv.slot Γ) (txvldt tx) ¿
+       |  ¿ minfee (UTxOEnv.pparams Γ) tx ≤ txfee tx ¿
+       |  ¿ consumed (UTxOEnv.pparams Γ) s tx ≡ produced (UTxOEnv.pparams Γ) s tx ¿
+       |  ¿ coin (mint tx) ≡ 0 ¿
+       |  ¿ txsize tx ≤ maxTxSize (UTxOEnv.pparams Γ) ¿
+  ... | yes p₀ | yes p₁ | yes p₂ | yes p₃ | yes p₄ | yes p₅ | yes p₆ = {!!}
+  ... | _ | _ | _ | _ | _ | _ | _ = {! !}
+
 \end{code}
 \caption{UTXO inference rules}
 \label{fig:rules:utxo-shelley}
